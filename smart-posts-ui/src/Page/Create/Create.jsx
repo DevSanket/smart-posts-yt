@@ -1,5 +1,8 @@
 import { useState } from "react";
 import Nav from "../../Components/Nav/Nav";
+import axios from 'axios';
+import { getToken } from "../../important";
+
 
 const CreatePage = () => {
     const [state, setState] = useState({
@@ -15,13 +18,30 @@ const CreatePage = () => {
         return setState({...state,[name]:event.target.value})
     }
 
+    const HandleSubmit = (e) => {
+        e.preventDefault();
+
+        axios.post(`${process.env.REACT_APP_API}/post`, { title, content, user, imgUrl }, {
+            headers: {
+                authorization: `Bearer ${getToken()}`
+            }
+        })
+            .then(res => {
+                console.log(res);
+                setState({ title: '', content: '', imgUrl: '', user: '', ...state });
+
+                alert('Post Created Successfully');
+            })
+            .catch(err => console.log(err));
+    }
+
     return ( 
         <div className="cotainer p-5 pt-3">
             <Nav />
             <hr />
             <h1>CREATE POST</h1>
             <br />
-            <form >
+            <form onSubmit={HandleSubmit}>
                 <div className="form-group mb-3">
                     <label className="form-label">
                         Title
@@ -48,9 +68,9 @@ const CreatePage = () => {
                         Img URL
                     </label>
                     <input type="text" value={imgUrl}
-                        onChange={handleChange('imgUrl ')} className="form-control" placeholder="IMG URL"  />
+                        onChange={handleChange('imgUrl')} className="form-control" placeholder="IMG URL"  />
                 </div>
-                <button className="btn btn-primary">
+                <button type="submit" className="btn btn-primary">
                     Create Post
                 </button>
             </form>

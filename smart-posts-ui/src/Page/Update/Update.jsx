@@ -1,7 +1,11 @@
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import Nav from "../../Components/Nav/Nav";
+import { useParams } from "react-router-dom";
+import { getToken } from "../../important";
 
 const UpdatePage = () => {
+    let { slug } = useParams();
     const [state, setState] = useState({
         title: '',
         content: '',
@@ -15,13 +19,44 @@ const UpdatePage = () => {
         return setState({...state,[name]:event.target.value})
     }
 
+    useEffect(() => {
+        axios.get(`${process.env.REACT_APP_API}/post/${slug}`)
+        .then(res => {
+            const { title, content, user, imgUrl } = res.data;
+            setState({ ...state, title, content, user, imgUrl });
+        })
+        .catch(err => {
+            alert("Error While getting update post");
+        });
+    
+    },[])
+
+    const HandleSubmit = (e) => {
+        e.preventDefault();
+        axios.put(`${process.env.REACT_APP_API}/post/${slug}`, { title, content, user, imgUrl }, {
+            headers: {
+                authorization: `Bearer ${getToken()}`
+            }
+        })
+            .then(res => {
+                alert('Post Updated');
+            })
+            .catch(err => {
+                console.log('====================================');
+                console.log(err);
+                console.log('====================================');
+                alert("Error while post updated")
+            });
+        
+        }
+
     return ( 
         <div className="cotainer p-5 pt-3">
             <Nav />
             <hr />
             <h1>UPDATE POST</h1>
             <br />
-            <form >
+            <form onSubmit={HandleSubmit} >
                 <div className="form-group mb-3">
                     <label className="form-label">
                         Title
@@ -48,9 +83,9 @@ const UpdatePage = () => {
                         Img URL
                     </label>
                     <input type="text" value={imgUrl}
-                        onChange={handleChange('imgUrl ')} className="form-control" placeholder="IMG URL"  />
+                        onChange={handleChange('imgUrl')} className="form-control" placeholder="IMG URL"  />
                 </div>
-                <button className="btn btn-primary">
+                <button type="submit" className="btn btn-primary">
                     Create Post
                 </button>
             </form>

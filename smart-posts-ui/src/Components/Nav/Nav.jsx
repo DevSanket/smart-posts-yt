@@ -36,7 +36,7 @@ const Nav = () => {
                                 <li>{
                                     !getUser() ? <li><Link to="/login" className="dropdown-item" href="#">Login</Link></li> :
                                     <li><div to="/login" className="dropdown-item" onClick={
-                                        () => logOut(() => navigate('/'))
+                                        () => logOut(() => window.location.reload(false))
                                     }>Log Out</div></li>
                                 }</li>  
 

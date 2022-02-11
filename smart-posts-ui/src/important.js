@@ -27,7 +27,7 @@ const getToken = () => {
 const getUser = () => {
     if (window !== 'undefined') {
         if (sessionStorage.getItem('token')) {
-            return JSON.parse(sessionStorage.getItem('token'));
+            return JSON.parse(sessionStorage.getItem('name'));
         } else {
             return false;
         }
